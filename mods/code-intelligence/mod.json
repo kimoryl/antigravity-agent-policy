@@ -1,0 +1,491 @@
+{
+  "schema_version": 1,
+  "id": "code-intelligence",
+  "name": "代码智能分析与多语言 CodeGraph Mod (Code Intelligence v2.1)",
+  "version": "2.1.0",
+  "category": "code-analysis",
+  "description": "七工具静态多语言 CodeGraph：增量 SQLite 缓存、SCIP 跨仓库协议索引与 OpenAPI/Proto 路由契约自动缝合、跨语言调用链追踪、PageRank RepoMap 与 JSON 基线健康门禁。",
+  "tags": [
+    "ast",
+    "codegraph",
+    "polyglot",
+    "scip",
+    "openapi",
+    "grpc",
+    "cross-boundary",
+    "sqlite-cache",
+    "code-search",
+    "symbol-trace",
+    "impact-analysis",
+    "architecture"
+  ],
+  "source": "upgraded_path_b_polyglot_codegraph",
+  "skills": [
+    {
+      "name": "code-intelligence",
+      "description": "多语言 AST 符号搜索、调用追踪、架构提取与增量 SQLite CodeGraph 探索指南",
+      "path": "skills/code-intelligence/SKILL.md"
+    }
+  ],
+  "mcp_servers": {
+    "code_intelligence": {
+      "command": "python",
+      "args": [
+        "-X",
+        "utf8",
+        "${MOD_DIR}/mcp/mcp_server.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  },
+  "mcp_tools": [
+    {
+      "name": "code_search",
+      "description": "Search project symbols and files through Polyglot CodeGraph AST (Python, TS/JS, Go, Rust, C#, Java, C/C++) with incremental SQLite cache.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "max_results": {
+            "type": "integer"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Optional provider ('polyglot' default, or 'python_ast')"
+          }
+        },
+        "required": [
+          "project_root",
+          "query"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "max_results": {
+            "type": "integer"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Optional provider ('polyglot' default, or 'python_ast')"
+          }
+        },
+        "required": [
+          "project_root",
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "symbol_trace",
+      "description": "Trace callers and callees for a project symbol or HTTP/gRPC/SCIP contract across Python, TS/JS, Go, Rust, C#, Java, and C/C++.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "callers",
+              "callees",
+              "both"
+            ]
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root",
+          "symbol"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "callers",
+              "callees",
+              "both"
+            ]
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root",
+          "symbol"
+        ]
+      }
+    },
+    {
+      "name": "impact_analysis",
+      "description": "Analyze affected files, transitive callers/subclasses, and related tests for a change.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "diff": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "diff": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root"
+        ]
+      }
+    },
+    {
+      "name": "architecture_extract",
+      "description": "Extract a structured polyglot project architecture and dependency graph.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root"
+        ]
+      }
+    },
+    {
+      "name": "codegraph_explore",
+      "description": "One-shot token-budgeted CodeGraph neighborhood explorer: returns matched symbols, N-hop caller/callee & inheritance graph, touched files, impact analysis, and SQLite incremental cache stats.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "max_depth": {
+            "type": "integer",
+            "description": "Call/inheritance hop depth (default 2)"
+          },
+          "max_nodes": {
+            "type": "integer",
+            "description": "Maximum symbol nodes to return to avoid fat output (default 25)"
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root",
+          "query"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "max_depth": {
+            "type": "integer",
+            "description": "Call/inheritance hop depth (default 2)"
+          },
+          "max_nodes": {
+            "type": "integer",
+            "description": "Maximum symbol nodes to return to avoid fat output (default 25)"
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root",
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "code_repomap_rank",
+      "description": "Rank symbols/modules with personalized PageRank and produce a strictly budgeted compact signature tree.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "focus_files": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "focus_symbols": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "token_budget": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 1000
+          },
+          "provider": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": "polyglot"
+          }
+        },
+        "required": [
+          "project_root"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "focus_files": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "focus_symbols": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "token_budget": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 1000
+          },
+          "provider": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": "polyglot"
+          }
+        },
+        "required": [
+          "project_root"
+        ]
+      }
+    },
+    {
+      "name": "code_health_audit",
+      "description": "Audit static dead code, cross-module dependency cycles and complexity hotspots with an isolated JSON baseline gate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "entry_points": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "complexity_threshold": {
+            "type": "integer",
+            "default": 10
+          },
+          "baseline_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "save_baseline": {
+            "type": "boolean",
+            "default": false
+          },
+          "provider": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": "polyglot"
+          }
+        },
+        "required": [
+          "project_root"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "entry_points": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "complexity_threshold": {
+            "type": "integer",
+            "default": 10
+          },
+          "baseline_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "save_baseline": {
+            "type": "boolean",
+            "default": false
+          },
+          "provider": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": "polyglot"
+          }
+        },
+        "required": [
+          "project_root"
+        ]
+      }
+    }
+  ],
+  "rules": [
+    "rules/AGENTS.md"
+  ],
+  "profile": "@core",
+  "profiles": [
+    "@coding",
+    "@mobile",
+    "@web",
+    "@office",
+    "@automation",
+    "@ops"
+  ],
+  "modality": "coding_and_testing"
+}

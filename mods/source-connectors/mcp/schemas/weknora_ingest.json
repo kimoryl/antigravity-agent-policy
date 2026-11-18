@@ -1,0 +1,48 @@
+{
+  "name": "weknora_ingest",
+  "description": "将 Markdown 或 URL 导入 Obsidian 静态知识库，自动生成 YAML、关联 WikiLinks 并刷新本地章节与向量索引。",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "知识文档标题"
+      },
+      "content": {
+        "type": "string",
+        "description": "Markdown 正文内容"
+      },
+      "url": {
+        "type": "string",
+        "description": "可选：要抓取入库的网页或 B 站视频 URL"
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      }
+    },
+    "required": []
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "知识文档标题"
+      },
+      "content": {
+        "type": "string",
+        "description": "Markdown 正文内容"
+      },
+      "url": {
+        "type": "string",
+        "description": "可选：要抓取入库的网页或 B 站视频 URL"
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      }
+    },
+    "required": []
+  }
+}

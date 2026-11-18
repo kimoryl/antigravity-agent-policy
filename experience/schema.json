@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "enabled", "retrieval", "promotion", "skill_evolution", "policy_evolution"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "enabled": {"type": "boolean"},
+    "retrieval": {"type": "object"},
+    "promotion": {"type": "object"},
+    "skill_evolution": {"type": "object"},
+    "policy_evolution": {"type": "object"}
+  }
+}

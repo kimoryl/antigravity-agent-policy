@@ -1,0 +1,70 @@
+{
+  "name": "weknora_rag_query",
+  "description": "检索 Obsidian：search 返回 SQLite FTS5 BM25 + 384d 轻量语义向量 + 双链 RRF 章节；chat 返回原文证据与 references，由调用方模型综合回答。",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "检索关键词或自然语言问题"
+      },
+      "mode": {
+        "type": "string",
+        "enum": [
+          "search",
+          "chat"
+        ],
+        "description": "search 返回原文分块，chat 返回 LLM 综合回答与引用"
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      },
+      "top_k": {
+        "type": "integer",
+        "description": "返回最大片段数（默认 8）"
+      },
+      "graph_hops": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 2
+      }
+    },
+    "required": [
+      "query"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "检索关键词或自然语言问题"
+      },
+      "mode": {
+        "type": "string",
+        "enum": [
+          "search",
+          "chat"
+        ],
+        "description": "search 返回原文分块，chat 返回 LLM 综合回答与引用"
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      },
+      "top_k": {
+        "type": "integer",
+        "description": "返回最大片段数（默认 8）"
+      },
+      "graph_hops": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 2
+      }
+    },
+    "required": [
+      "query"
+    ]
+  }
+}

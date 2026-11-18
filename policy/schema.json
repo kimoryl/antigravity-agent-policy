@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex Agent Policy",
+  "type": "object",
+  "required": ["schema_version", "model_policy", "defaults", "roles", "overrides", "escalation", "limits"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "model_policy": {
+      "type": "object",
+      "required": ["default", "stronger", "allowed_models"],
+      "properties": {
+        "default": {"type": "string"},
+        "stronger": {"type": ["string", "null"]},
+        "allowed_models": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "defaults": {"$ref": "#/$defs/agentPolicy"},
+    "roles": {"type": "object", "additionalProperties": {"$ref": "#/$defs/agentPolicy"}},
+    "overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["when", "set"],
+        "properties": {
+          "when": {"type": "object"},
+          "set": {"type": "object"}
+        }
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "required": ["retry_limit", "increase_effort_after_retries", "low_confidence_threshold", "require_reviewer_for_architecture_change"],
+      "properties": {
+        "retry_limit": {"type": "integer", "minimum": 0},
+        "increase_effort_after_retries": {"type": "integer", "minimum": 0},
+        "low_confidence_threshold": {"type": "number", "minimum": 0, "maximum": 1},
+        "require_reviewer_for_architecture_change": {"type": "boolean"}
+      }
+    },
+    "limits": {
+      "type": "object",
+      "required": ["max_parallel_agents", "max_agent_depth", "max_context_tokens", "allow_subagent_creation"],
+      "properties": {
+        "max_parallel_agents": {"type": "integer", "minimum": 0},
+        "max_agent_depth": {"type": "integer", "minimum": 0},
+        "max_context_tokens": {"type": "integer", "minimum": 1},
+        "allow_subagent_creation": {"type": "boolean"}
+      }
+    },
+    "global_denied_tools": {"type": "array", "items": {"type": "string"}},
+    "team": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "min_concurrency": {"type": "integer", "minimum": 1},
+        "max_concurrency": {"type": "integer", "minimum": 1},
+        "step": {"type": "integer", "minimum": 1},
+        "max_depth": {"const": 2},
+        "child_model": {"type": "string", "pattern": "-luna$"},
+        "difficulty_effort": {
+          "type": "object",
+          "required": ["simple", "moderate", "complex"],
+          "properties": {
+            "simple": {"enum": ["low", "medium", "high"]},
+            "moderate": {"enum": ["low", "medium", "high"]},
+            "complex": {"enum": ["low", "medium", "high"]}
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "agentPolicy": {
+      "type": "object",
+      "required": ["reasoning_effort", "context_budget_tokens", "permissions"],
+      "properties": {
+        "reasoning_effort": {"type": "string", "enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max", "ultra"]},
+        "context_budget_tokens": {"type": "integer", "minimum": 1},
+        "permissions": {"type": "array", "items": {"enum": ["read", "write", "execute", "delegate", "external"]}}
+      }
+    }
+  }
+}

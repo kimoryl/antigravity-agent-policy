@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Antigravity 代理策略与全局运行时控制台</title>
+  <link rel="stylesheet" href="delivery.css">
+  <style>
+    :root { color-scheme: dark; font-family: Inter, "Segoe UI", "Microsoft YaHei", sans-serif; background: #0b1020; color: #eef2ff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; }
+    header { padding: 28px max(24px, calc((100vw - 1200px) / 2)); background: radial-gradient(circle at 80% 15%, #273a73, #111b36 45%, #0d1429 85%); border-bottom: 1px solid #304064; }
+    .eyebrow { color: #77dfca; font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 8px 0; font-size: clamp(25px, 3vw, 38px); letter-spacing: -.03em; }
+    header p { color: #b8c6e4; margin: 0; line-height: 1.6; }
+    main { max-width: 1248px; margin: auto; padding: 24px; display: grid; gap: 22px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .metric, .panel { background: #151e35; border: 1px solid #30405d; border-radius: 16px; box-shadow: 0 12px 35px #050a1740; }
+    .metric { padding: 18px; }
+    .metric span { color: #a5b5d4; font-size: 13px; }
+    .metric strong { display: block; margin-top: 8px; font-size: 26px; }
+    .grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 22px; }
+    .panel { padding: 22px; min-width: 0; }
+    h2 { font-size: 18px; margin: 0 0 14px; }
+    h3 { font-size: 15px; margin: 0 0 8px; }
+    .muted { color: #9eafcd; font-size: 13px; line-height: 1.5; }
+    label { display: block; color: #b5c3df; font-size: 13px; margin: 14px 0 6px; }
+    input, select { background: #0e172b; color: #eef2ff; border: 1px solid #3d5072; border-radius: 9px; width: 100%; padding: 11px 12px; font: inherit; }
+    input:focus, select:focus, button:focus-visible { outline: 2px solid #78dccb; outline-offset: 2px; }
+    .row { display: flex; gap: 10px; align-items: end; }
+    .row > div { flex: 1; }
+    button { border: 0; border-radius: 9px; background: #68d7bd; color: #08231e; font: inherit; font-weight: 700; padding: 11px 17px; cursor: pointer; }
+    button.secondary { background: #314363; color: #edf3ff; }
+    button:hover { filter: brightness(1.08); }
+    .cards { display: grid; gap: 10px; margin-top: 15px; }
+    .card { border: 1px solid #354560; background: #101a30; padding: 14px; border-radius: 11px; }
+    .card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+    .chip { display: inline-block; background: #20375b; border: 1px solid #385680; color: #b8d8ff; border-radius: 999px; padding: 3px 9px; font-size: 12px; }
+    .chip.good { background: #123c36; border-color: #2b806f; color: #9ef0d7; }
+    .chip.warn { background: #503826; border-color: #8b603c; color: #fbd59f; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #0b1327; border: 1px solid #2b3a5a; border-radius: 10px; padding: 14px; overflow: auto; max-height: 340px; color: #cde0ff; font-size: 12px; line-height: 1.55; }
+    .trace { max-height: 360px; overflow: auto; display: grid; gap: 8px; }
+    .event { border-left: 3px solid #68d7bd; padding: 7px 10px; background: #101a30; border-radius: 0 8px 8px 0; font-size: 12px; }
+    .event time { display: block; color: #93a8ca; margin-top: 3px; }
+    .error { color: #ffb6a6; }
+    @media (max-width: 800px) { .metrics { grid-template-columns: repeat(2, 1fr); } .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 500px) { .row { display: block; } .row button { margin-top: 12px; width: 100%; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">ANTIGRAVITY 本机插件 · 全局运行时可观测面板</div>
+    <h1>Antigravity Agent Policy 控制台</h1>
+    <p>查看代理策略、技能池（Skill Pool）、能力池（Capability Pool）与最近运行记录。解析只返回元数据；打开已选技能时才读取正文。</p>
+  </header>
+  <main>
+    <section class="panel delivery-panel" aria-labelledby="delivery-title">
+      <div class="card-head"><div><div class="eyebrow">产物交付与人工验收</div><h2 id="delivery-title">交付面板</h2></div><button class="secondary" id="delivery-refresh">刷新交付</button></div>
+      <p class="muted">查看实际产物，按交付版本验收。退回意见会保留，重开任务后继续修改。</p>
+      <div class="delivery-filters">
+        <div><label for="delivery-project">项目</label><select id="delivery-project"><option value="">全部项目</option></select></div>
+        <div><label for="delivery-type">任务类型</label><select id="delivery-type"><option value="">全部类型</option></select></div>
+        <span id="delivery-count" class="muted"></span>
+      </div>
+      <p id="delivery-notice" class="muted" role="status" aria-live="polite">正在加载交付…</p>
+      <div id="delivery-board" class="delivery-board" aria-label="交付任务看板"></div>
+    </section>
+    <dialog id="delivery-dialog" aria-labelledby="delivery-detail-title">
+      <div class="card-head"><h2 id="delivery-detail-title">交付详情</h2><button id="delivery-close" class="secondary" aria-label="关闭交付详情">关闭</button></div>
+      <p id="delivery-task-meta" class="muted"></p>
+      <label for="delivery-version">交付版本</label><select id="delivery-version"></select>
+      <div id="delivery-detail"></div>
+      <div id="delivery-review" hidden>
+        <label for="delivery-comment">验收意见（退回修改时必填）</label><textarea id="delivery-comment" rows="3" maxlength="10000" placeholder="说明需要修改的内容和预期结果"></textarea>
+        <div class="delivery-actions"><button id="delivery-accept">验收通过</button><button id="delivery-reject" class="secondary">退回修改</button></div>
+      </div>
+      <p id="delivery-review-result" role="status" aria-live="polite"></p>
+    </dialog>
+    <section class="metrics" aria-label="概览">
+      <div class="metric"><span>代理角色 (Roles)</span><strong id="role-count">—</strong></div>
+      <div class="metric"><span>注册技能 (Skills)</span><strong id="skill-count">—</strong></div>
+      <div class="metric"><span>统一能力 (Capabilities)</span><strong id="cap-count">—</strong></div>
+      <div class="metric"><span>最大并发子代理</span><strong id="parallel-count">—</strong></div>
+    </section>
+    <section class="panel" aria-label="团队协作模式">
+      <div class="card-head"><h2>团队协作模式 (Team Mode)</h2><span class="chip">全局运行时</span></div>
+      <p class="muted">团队负责人 (Lead) → 团队代理 (Team Agent) → 子代理 (Subagent)。共享并发池，成员偏好与团队消息保存在项目运行时状态中。</p>
+      <div id="teams" class="cards"></div>
+    </section>
+    <section class="panel" aria-label="经验库">
+      <div class="card-head"><h2>经验库 (Experience)</h2><span class="chip">只读元数据</span></div>
+      <p class="muted">项目经验与已晋级的全局经验。正文不会在监控面板自动展开。</p>
+      <div id="experiences" class="cards"></div>
+    </section>
+    <section class="grid">
+      <div class="panel">
+        <h2>按需加载技能 (Skill)</h2>
+        <p class="muted">按任务阶段与所需能力（Capability）解析。相同优先级的歧义会列出候选供选择。</p>
+        <div class="row">
+          <div><label for="stage">任务阶段</label><select id="stage"><option value="planning">规划阶段 (Planning)</option><option value="execution" selected>执行阶段 (Execution)</option><option value="verification">验证阶段 (Verification)</option></select></div>
+          <div><label for="capabilities">所需能力（逗号分隔）</label><input id="capabilities" value="agent.policy" placeholder="例如 agent.policy, code.review"></div>
+          <div><label for="user-invoked">用户明确点名的技能（逗号分隔）</label><input id="user-invoked" placeholder="例如 mattpocock-implement"></div>
+          <button id="resolve-skill">解析</button>
+        </div>
+        <div id="skill-result" class="cards" aria-live="polite"></div>
+        <div id="skill-preview"></div>
+      </div>
+      <div class="panel">
+        <h2>代理策略试算</h2>
+        <p class="muted">试算仅预览策略结果，不会派发子代理，也不会改变 Antigravity 的原生权限。</p>
+        <label for="role">代理角色</label><select id="role"></select>
+        <label for="complexity">任务复杂度</label><select id="complexity"><option value="simple">简单 (Simple)</option><option value="moderate" selected>中等 (Moderate)</option><option value="complex">复杂 (Complex)</option></select>
+        <label for="risk">风险等级</label><select id="risk"><option value="low">低风险 (Low)</option><option value="high">高风险 (High)</option></select>
+        <button id="resolve-policy" style="margin-top:14px">试算策略</button>
+        <pre id="policy-result" aria-live="polite">选择角色后可点击“试算策略”查看结果。</pre>
+      </div>
+    </section>
+    <section class="grid">
+      <div class="panel"><div class="card-head"><h2>任务与检查点 (Checkpoints)</h2><button class="secondary" id="refresh">刷新</button></div><div id="tasks" class="cards"></div><pre id="task-detail" hidden></pre></div>
+      <div class="panel"><h2>最近运行记录</h2><p class="muted">仅保存决策与结果元数据，不含工具输出正文。</p><div id="events" class="trace"></div></div>
+    </section>
+    <section class="panel">
+      <h2>代理角色分工 (Agent Roles)</h2><div id="agent-roles" class="cards"></div>
+    </section>
+    <section class="panel">
+      <h2>技能池目录 (Skill Pool)</h2><div id="skill-catalog" class="cards"></div>
+    </section>
+    <section class="panel">
+      <h2>统一能力池 (Capability Pool)</h2>
+      <p class="muted">只读查看统一能力入口、Skill/MCP 分流、软件依赖、版本和健康状态。面板不会主动启动外部服务。</p>
+      <div id="capability-catalog" class="cards"></div>
+    </section>
+  </main>
+  <script>
+    const $ = id => document.getElementById(id);
+    const api = path => new URL(path.replace(/^\//, ''), location.href).toString();
+    const chip = (text, kind = '') => { const span = document.createElement('span'); span.className = `chip ${kind}`; span.textContent = text; return span; };
+    const message = (target, text, error = false) => { target.textContent = text; target.classList.toggle('error', error); };
+    async function request(path, body) {
+      const response = await fetch(api(path), body ? {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)} : undefined);
+      const value = await response.json();
+      if (!response.ok) throw new Error(value.error || `HTTP ${response.status}`);
+      return value;
+    }
+    async function refresh() {
+      if (location.protocol === 'file:') { message($('events'), '请通过 dashboard_open 工具或运行 py -3 scripts/dashboard_cli.py 打开 http://127.0.0.1 地址；file:// 无法访问动态数据。', true); return; }
+      try {
+        const state = await request('api/state');
+        $('role-count').textContent = Object.keys(state.policy.roles).length;
+        $('skill-count').textContent = state.skills.length;
+         $('cap-count').textContent = (state.capability_pool?.capabilities || []).length;
+         $('parallel-count').textContent = state.policy.limits.max_parallel_agents;
+         const teams = $('teams'); teams.replaceChildren();
+         for (const team of (state.teams || [])) {
+           const card = document.createElement('div'); card.className = 'card';
+           const head = document.createElement('div'); head.className = 'card-head';
+           const title = document.createElement('strong'); title.textContent = `团队 ${team.team_id}`;
+           const concurrency = team.concurrency || {};
+           head.append(title, chip(`并发 ${concurrency.running || 0} / ${concurrency.current_limit || 0}`, concurrency.waiting ? 'warn' : 'good'));
+           card.append(head);
+           const members = document.createElement('div'); members.className = 'chips';
+           for (const member of team.members || []) members.append(chip(`${member.display_name || member.role} · ${member.role}`));
+           card.append(members);
+           const tree = document.createElement('div'); tree.className = 'cards';
+           for (const agent of team.agents || []) {
+             const row = document.createElement('div'); row.className = 'card';
+             row.style.marginLeft = `${Math.min(agent.depth, 2) * 18}px`;
+             row.textContent = `${agent.depth === 0 ? '负责人 (Lead)' : agent.depth === 1 ? '团队代理 (Team Agent)' : '子代理 (Subagent)'} · ${agent.role} · ${agent.status}`;
+             tree.append(row);
+           }
+           card.append(tree);
+           if ((team.messages || []).length) {
+             const chat = document.createElement('pre'); chat.textContent = team.messages.slice(-10).map(item => `${item.from_member} → ${item.to_member}\n${item.content}`).join('\n\n'); card.append(chat);
+           }
+           teams.append(card);
+         }
+         if (!(state.teams || []).length) message(teams, '暂无团队。可通过 team_create 创建。');
+        const experiences = $('experiences'); experiences.replaceChildren();
+        for (const item of (state.experiences || [])) {
+          const card = document.createElement('div'); card.className = 'card';
+          const head = document.createElement('div'); head.className = 'card-head';
+          head.append(document.createElement('strong'));
+          head.firstChild.textContent = item.title || item.experience_id;
+          head.append(chip(`${item.scope || 'project'} · ${item.status || 'candidate'}`, item.status === 'global' ? 'good' : 'warn'));
+          const body = document.createElement('div'); body.className = 'muted';
+          body.textContent = `置信度 ${item.confidence ?? '—'} · 支持次数 ${item.support_count ?? 0} · 关联项目 ${item.project_count ?? 0}`;
+          card.append(head, body); experiences.append(card);
+        }
+        if (!(state.experiences || []).length) message(experiences, '暂无经验库元数据。');
+        const previousRole = $('role').value;
+        $('role').replaceChildren(...Object.keys(state.policy.roles).map(name => { const option = document.createElement('option'); option.value = name; const label = state.agent_registry?.[name]?.display_name; option.textContent = label ? `${label} (${name})` : name; return option; }));
+        if (previousRole) $('role').value = previousRole;
+        const roleList = $('agent-roles'); roleList.replaceChildren();
+        const categoryNames = {general: '通用研发', presentation: 'PPT 演示', learning: '教学辅导', writing: '写作编审'};
+        for (const [name, role] of Object.entries(state.agent_registry || {})) {
+          const card = document.createElement('div'); card.className = 'card';
+          const head = document.createElement('div'); head.className = 'card-head';
+          const title = document.createElement('h3'); title.textContent = role.display_name ? `${role.display_name} (${name})` : name;
+          head.append(title, chip(categoryNames[role.category || 'general'] || role.category));
+          const purpose = document.createElement('p'); purpose.textContent = role.purpose;
+          const chips = document.createElement('div'); chips.className = 'chips';
+          for (const tag of role.skill_tags || []) chips.append(chip(tag));
+          card.append(head, purpose, chips); roleList.append(card);
+        }
+        const catalog = $('skill-catalog'); catalog.replaceChildren();
+        for (const skill of state.skills) {
+          const card = document.createElement('div'); card.className = 'card';
+          const head = document.createElement('div'); head.className = 'card-head';
+          const title = document.createElement('h3'); title.textContent = skill.name;
+          head.append(title, chip(`v${skill.version}`, skill.trust === 'trusted' ? 'good' : 'warn'));
+          if (skill.invocation_mode === 'user') head.append(chip('仅显式调用'));
+          const chips = document.createElement('div'); chips.className = 'chips';
+          for (const tag of skill.tags || []) chips.append(chip(tag));
+          for (const cap of skill.provides) chips.append(chip(cap));
+          for (const stage of skill.stage) chips.append(chip(stage));
+          card.append(head, chips); catalog.append(card);
+        }
+         if (!state.skills.length) message(catalog, '技能池尚无注册项。');
+         const capabilityCatalog = $('capability-catalog'); capabilityCatalog.replaceChildren();
+         for (const capability of (state.capability_pool?.capabilities || [])) {
+           const card = document.createElement('div'); card.className = 'card';
+           const head = document.createElement('div'); head.className = 'card-head';
+           const title = document.createElement('h3'); title.textContent = capability.name;
+           const availability = capability.availability || {};
+           head.append(title, chip(`${capability.type} · v${capability.version}`, availability.available ? 'good' : 'warn'));
+           const details = document.createElement('p'); details.className = 'muted';
+           const tools = capability.mcp?.tools?.join(', ') || '—';
+           const provider = capability.mcp?.provider || '—';
+           const software = capability.software?.name || '—';
+           details.textContent = `提供能力: ${(capability.provides || []).join(', ')} · 技能: ${capability.skill?.name || '—'} · MCP: ${provider} (${tools}) · 外部依赖: ${software} · 健康度: ${availability.health || 'unknown'} · 状态: ${availability.status || 'unknown'}`;
+           const chips = document.createElement('div'); chips.className = 'chips';
+           for (const tag of capability.tags || []) chips.append(chip(tag));
+           for (const stage of capability.stage || []) chips.append(chip(stage));
+           card.append(head, details, chips); capabilityCatalog.append(card);
+         }
+         if (!(state.capability_pool?.capabilities || []).length) message(capabilityCatalog, '统一能力池尚无注册项。');
+         const tasks = $('tasks'); tasks.replaceChildren();
+        for (const task of state.tasks) {
+          const card = document.createElement('div'); card.className = 'card';
+          const head = document.createElement('div'); head.className = 'card-head';
+          const title = document.createElement('strong'); title.textContent = task.root_goal;
+          head.append(title, chip(task.status, task.status === 'complete' ? 'good' : ''));
+          const info = document.createElement('p'); info.className = 'muted'; info.textContent = `步骤 ${task.done_steps}/${task.plan_steps} · 版本 ${task.revision} · Token ${task.usage.input_tokens + task.usage.output_tokens}`;
+          const button = document.createElement('button'); button.className = 'secondary'; button.textContent = '查看状态';
+          button.onclick = async () => { try { const detail = await request(`api/task?task_id=${encodeURIComponent(task.task_id)}`); $('task-detail').hidden = false; message($('task-detail'), JSON.stringify(detail, null, 2)); } catch (error) { $('task-detail').hidden = false; message($('task-detail'), error.message, true); } };
+          card.append(head, info, button); tasks.append(card);
+        }
+        if (!state.tasks.length) message(tasks, '暂无任务。');
+        const events = $('events'); events.replaceChildren();
+        for (const event of state.events.slice().reverse()) {
+          const row = document.createElement('div'); row.className = 'event';
+          const headline = document.createElement('strong'); headline.textContent = `${event.kind} · ${event.role || event.status || 'runtime'}`;
+          const time = document.createElement('time'); time.textContent = new Date(event.time * 1000).toLocaleString();
+          row.append(headline, time); events.append(row);
+        }
+        if (!state.events.length) message(events, '暂无运行记录。');
+      } catch (error) { message($('events'), error.message, true); }
+    }
+    $('resolve-skill').onclick = async () => {
+      const target = $('skill-result'); message(target, '解析中…'); $('skill-preview').replaceChildren();
+      try {
+        const result = await request('api/skill/resolve', {stage: $('stage').value, required_capabilities: $('capabilities').value.split(',').map(x => x.trim()).filter(Boolean), user_invoked_skills: $('user-invoked').value.split(',').map(x => x.trim()).filter(Boolean)});
+        target.replaceChildren();
+        const summary = document.createElement('div'); summary.className = 'card';
+        summary.append(chip(result.status, result.status === 'ready' ? 'good' : 'warn'));
+        const detail = document.createElement('p'); detail.className = 'muted'; detail.textContent = `未匹配：${result.unresolved_capabilities.join(', ') || '无'} · 歧义：${result.ambiguous_candidates.map(x => x.capability + ' → ' + x.candidates.join(' / ')).join('; ') || '无'}`;
+        summary.append(detail); target.append(summary);
+        for (const skill of result.selected_skills) {
+          const card = document.createElement('div'); card.className = 'card card-head';
+          const name = document.createElement('strong'); name.textContent = `${skill.name} · v${skill.version}`;
+          const button = document.createElement('button'); button.className = 'secondary'; button.textContent = '查看已选技能';
+          button.onclick = async () => { try { const loaded = await request('api/skill/load', {selection_id: result.selection_id, name: skill.name}); const pre = document.createElement('pre'); pre.textContent = loaded.content; $('skill-preview').replaceChildren(pre); } catch (error) { message($('skill-preview'), error.message, true); } };
+          card.append(name, button); target.append(card);
+        }
+      } catch (error) { message(target, error.message, true); }
+    };
+    $('resolve-policy').onclick = async () => {
+      try { const result = await request('api/policy/resolve', {role: $('role').value, task_profile: {complexity: $('complexity').value, risk: $('risk').value}}); message($('policy-result'), JSON.stringify(result, null, 2)); }
+      catch (error) { message($('policy-result'), error.message, true); }
+    };
+    $('refresh').onclick = refresh;
+    refresh();
+  </script>
+  <script src="delivery.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "tool": "ambitious_thinking_guide",
+  "description": "Felix Rieseberg (Claude Engineering Lead) Ambitious Deep Thinking framework (Altitude, Depth, Range, and the 4-Question Deep-Rewrite Meta-Prompt).",
+  "workflows": [
+    {
+      "id": "ambitious-deep-thinking",
+      "description": "使用雄心四维模型（高度 Altitude、深度 Depth、范围 Range）与四问深度重写元指令，将浅层任务升维为世界级专家水准的深度思考与闭环交付。",
+      "manual": false,
+      "source": "skills/ambitious-deep-thinking/SKILL.md",
+      "resources": [
+        "SKILL.md",
+        "references/felix-rieseberg-ambitious-tutorial.md"
+      ],
+      "related": []
+    }
+  ]
+}

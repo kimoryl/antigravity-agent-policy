@@ -1,0 +1,62 @@
+{
+  "name": "impact_analysis",
+  "description": "Analyze affected files, transitive callers/subclasses, and related tests for a change.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "paths": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "symbols": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "diff": {
+        "type": "string"
+      },
+      "provider": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_root"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "paths": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "symbols": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "diff": {
+        "type": "string"
+      },
+      "provider": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_root"
+    ]
+  }
+}

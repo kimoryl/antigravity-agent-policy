@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "id": "context7-sdk-verifier",
+  "name": "Context7 实时 SDK 签名校验与双 Agent 记忆事实伴飞套件",
+  "version": "1.1.0",
+  "category": "code-analysis",
+  "description": "Project × Modality × Global 三维交叉记忆引擎：支持只读作战简报、零导入静态 AST 与 SHA256 客观对账，以及独立伴飞审查员驱动的项目、交付工艺与全局经验双端原子分流提交。",
+  "tags": [
+    "context7",
+    "sdk-verifier",
+    "ast-introspect",
+    "memory-sidecar",
+    "anti-hallucination",
+    "bi-temporal-memory",
+    "fact-reconciliation"
+  ],
+  "agents": [
+    "agy-cli",
+    "codex-cli",
+    "opus-cli"
+  ],
+  "skills": [
+    {
+      "name": "sdk-memory-sidecar",
+      "description": "三维交叉记忆伴飞：所有产出型任务执行起飞简报、独立产物审查与项目/工艺/全局记忆分流提交；轻量问答与只读查询关闭伴飞。",
+      "path": "skills/sdk-memory-sidecar/SKILL.md"
+    }
+  ],
+  "mcp_servers": {
+    "context7-sdk-verifier": {
+      "command": "python",
+      "args": [
+        "-X",
+        "utf8",
+        "${MOD_DIR}/mcp/mcp_server.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  },
+  "mcp_tools": [
+    {
+      "name": "sdk_fact_lookup",
+      "description": "[只读预检] 汇合项目事实、显式或自动推断的交付工艺、全局经验与核心规则，返回三维交叉作战简报；保留 SDK 过滤与可选 Context7 查询。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "packages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "modalities": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "task_intent": {
+            "type": "string"
+          },
+          "query_context7": {
+            "type": "boolean"
+          },
+          "library_or_module": {
+            "type": "string"
+          },
+          "symbol_or_topic": {
+            "type": "string"
+          },
+          "allow_network": {
+            "type": "boolean"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sdk_fact_reconcile_report",
+      "description": "[伴飞审查员专用 - 事实对账单生成器] 扫描工作区依赖锁文件 (pyproject.toml / package.json / mod.json 等) 的 SHA256、目标代码文件或 git diff 中的实际 AST 调用链、本机真实 AST 签名以及现有 L1_Projects/<id>.json 记忆，输出《三方客观事实差异报告》并签发防伪对账哈希 (reconcile_hash)。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "changed_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "inspect_packages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "inspect_symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "target_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "phase": {
+            "type": "string",
+            "enum": [
+              "pre_flight",
+              "post_diff"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sdk_memory_review_commit",
+      "description": "[独立伴飞审查员专用] 凭 reconcile_hash 将核验事实、工艺规则/预设/记忆和全局经验分流至 L1_Projects、L1_Modalities、L2_Experiences，执行双时间轴失效、水位归档与双端原子同步。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_root": {
+            "type": "string"
+          },
+          "reconcile_hash": {
+            "type": "string"
+          },
+          "verified_facts": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "verified_memories": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "verified_experiences": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "project_name": {
+            "type": "string"
+          },
+          "modality_id": {
+            "type": "string"
+          },
+          "modalities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "verified_modality_rules": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "verified_modality_memories": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "verified_design_presets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "supersede_memory_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviewer_model": {
+            "type": "string"
+          },
+          "mechanical_only": {
+            "type": "boolean"
+          },
+          "require_heterogeneous_review": {
+            "type": "boolean"
+          },
+          "ttl_days": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "promote_to_global": {
+            "type": "boolean"
+          },
+          "invalidate_memory_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "reconcile_hash"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "rules": [
+    "rules/AGENTS.md"
+  ],
+  "profile": "@core",
+  "profiles": [
+    "@coding",
+    "@mobile",
+    "@web",
+    "@office",
+    "@automation",
+    "@ops"
+  ],
+  "modality": "coding_and_testing"
+}

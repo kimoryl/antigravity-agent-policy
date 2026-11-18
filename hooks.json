@@ -1,0 +1,11 @@
+{
+  "antigravity-agent-policy": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "python -X utf8 hooks/agy_policy_hook.py SessionStart",
+        "timeout": 5
+      }
+    ]
+  }
+}

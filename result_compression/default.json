@@ -1,0 +1,20 @@
+{
+  "result_compression": {
+    "enabled": true,
+    "threshold_chars": 12000,
+    "raw_evidence": true,
+    "retention_days": 7,
+    "max_retrieve_chars": 20000,
+    "model_compressor": false,
+    "max_compact_chars": 6000,
+    "max_result_chars": 2000000,
+    "max_task_chars": 20000000,
+    "max_global_chars": 100000000,
+    "max_task_evidence": 1000,
+    "max_global_evidence": 10000,
+    "max_search_matches": 50,
+    "search_context_lines": 2,
+    "search_per_file": 5,
+    "max_diagnostic_lines": 40
+  }
+}

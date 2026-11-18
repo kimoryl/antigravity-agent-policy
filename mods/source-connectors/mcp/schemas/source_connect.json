@@ -1,0 +1,60 @@
+{
+  "name": "source_connect",
+  "description": "Inspect or query Obsidian vault status, hybrid knowledge search, documents, and repository connectors; legacy operations remain compatible.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "operation": {
+        "type": "string",
+        "enum": [
+          "status",
+          "repository_search",
+          "repository_read",
+          "knowledge_search",
+          "document_read"
+        ]
+      },
+      "query": {
+        "type": "string"
+      },
+      "path": {
+        "type": "string"
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      }
+    },
+    "required": [
+      "operation"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "operation": {
+        "type": "string",
+        "enum": [
+          "status",
+          "repository_search",
+          "repository_read",
+          "knowledge_search",
+          "document_read"
+        ]
+      },
+      "query": {
+        "type": "string"
+      },
+      "path": {
+        "type": "string"
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      }
+    },
+    "required": [
+      "operation"
+    ]
+  }
+}

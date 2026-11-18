@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex Agent Policy Memory Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "backend", "hindsight", "bank", "recall", "retain", "reflect", "fallback"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "backend": {"enum": ["auto", "sqlite", "hindsight"]},
+    "hindsight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_url", "api_key_env", "connect_timeout_ms", "recall_timeout_ms", "retain_timeout_ms", "reflect_timeout_ms"],
+      "properties": {
+        "api_url": {"type": ["string", "null"], "format": "uri"},
+        "api_key_env": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,63}$"},
+        "local_only": {"type": "boolean"},
+        "connect_timeout_ms": {"type": "integer", "minimum": 100, "maximum": 30000},
+        "recall_timeout_ms": {"type": "integer", "minimum": 100, "maximum": 30000},
+        "retain_timeout_ms": {"type": "integer", "minimum": 100, "maximum": 60000},
+        "reflect_timeout_ms": {"type": "integer", "minimum": 100, "maximum": 60000}
+      }
+    },
+    "bank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "prefix"],
+      "properties": {
+        "strategy": {"const": "git_repository"},
+        "prefix": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,48}$"}
+      }
+    },
+    "recall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "default_limit", "max_limit", "max_chars", "automatic"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "default_limit": {"type": "integer", "minimum": 1, "maximum": 10},
+        "max_limit": {"type": "integer", "minimum": 1, "maximum": 10},
+        "max_chars": {"type": "integer", "minimum": 1, "maximum": 8000},
+        "automatic": {"type": "boolean"}
+      }
+    },
+    "retain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "max_chars", "automatic_task_summary", "store_raw_transcript", "store_tool_output"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "max_chars": {"type": "integer", "minimum": 1, "maximum": 8000},
+        "automatic_task_summary": {"type": "boolean"},
+        "store_raw_transcript": {"const": false},
+        "store_tool_output": {"const": false}
+      }
+    },
+    "reflect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "mode", "max_chars"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "mode": {"const": "on_demand"},
+        "max_chars": {"type": "integer", "minimum": 1, "maximum": 8000}
+      }
+    },
+    "fallback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "backend"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "backend": {"const": "sqlite"}
+      }
+    }
+  }
+}

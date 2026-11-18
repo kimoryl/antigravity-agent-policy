@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentProfile", "type": "object", "required": ["id", "name", "capabilities", "memory_scope"],
+  "properties": {"id": {"type": "string"}, "name": {"type": "string"}, "capabilities": {"type": "array", "items": {"type": "string"}}, "memory_scope": {"type": "array", "items": {"type": "string"}}, "status": {"enum": ["registered", "enabled", "disabled"]}},
+  "additionalProperties": true
+}

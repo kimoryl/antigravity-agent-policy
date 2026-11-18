@@ -1,0 +1,56 @@
+{
+  "name": "symbol_trace",
+  "description": "Trace callers and callees for a project symbol or HTTP/gRPC/SCIP contract across Python, TS/JS, Go, Rust, C#, Java, and C/C++.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "symbol": {
+        "type": "string"
+      },
+      "direction": {
+        "type": "string",
+        "enum": [
+          "callers",
+          "callees",
+          "both"
+        ]
+      },
+      "provider": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_root",
+      "symbol"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "symbol": {
+        "type": "string"
+      },
+      "direction": {
+        "type": "string",
+        "enum": [
+          "callers",
+          "callees",
+          "both"
+        ]
+      },
+      "provider": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_root",
+      "symbol"
+    ]
+  }
+}

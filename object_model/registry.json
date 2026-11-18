@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "objects": {
+    "Event": {"schema": "schemas/event.json", "lifecycle": ["produced", "normalized", "dispatched", "processed", "archived"], "owner": "event_bus", "readers": ["hook", "policy_engine", "runtime", "agent"], "writers": ["hook", "event_bus"]},
+    "Task": {"schema": "schemas/task.json", "lifecycle": ["created", "assigned", "running", "review", "completed", "failed"], "owner": "state_manager", "readers": ["agent", "execution_engine", "policy_engine"], "writers": ["state_manager", "execution_engine"]},
+    "AgentProfile": {"schema": "schemas/agent_profile.json", "lifecycle": ["registered", "enabled", "disabled"], "owner": "agent_registry", "readers": ["policy_engine", "execution_engine"], "writers": ["agent_registry"]},
+    "AgentInstance": {"schema": "schemas/agent_instance.json", "lifecycle": ["created", "assigned", "running", "waiting", "review", "completed", "failed", "stopped"], "owner": "execution_engine", "readers": ["task", "policy_engine", "dashboard"], "writers": ["execution_engine", "state_manager"]},
+    "Capability": {"schema": "schemas/capability.json", "lifecycle": ["registered", "available", "deprecated"], "owner": "capability_resolver", "readers": ["agent", "policy_engine", "task"], "writers": ["capability_resolver"]},
+    "Policy": {"schema": "schemas/policy.json", "lifecycle": ["loaded", "evaluated", "updated"], "owner": "policy_engine", "readers": ["runtime", "hook", "agent"], "writers": ["policy_engine"]},
+    "Memory": {"schema": "schemas/memory.json", "lifecycle": ["created", "active", "archived", "stale"], "owner": "memory_manager", "readers": ["agent", "task", "runtime"], "writers": ["memory_manager"]},
+    "Evidence": {"schema": "schemas/evidence.json", "lifecycle": ["captured", "verified", "rejected", "archived"], "owner": "evidence_manager", "readers": ["task", "reviewer", "dashboard"], "writers": ["evidence_manager"]}
+  },
+  "runtime_modules": {
+    "event_bus": {"responsibility": "event delivery and archival", "reads": ["Event"], "writes": ["Event"]},
+    "execution_engine": {"responsibility": "Agent lifecycle and Task execution state", "reads": ["Task", "AgentInstance", "Capability"], "writes": ["Task", "AgentInstance"]},
+    "state_manager": {"responsibility": "durable Runtime state", "reads": ["Task", "AgentInstance", "Memory", "Evidence"], "writes": ["Task", "AgentInstance"]},
+    "policy_engine": {"responsibility": "allow, deny, or approve decisions", "reads": ["Event", "Policy"], "writes": ["Policy"]},
+    "capability_resolver": {"responsibility": "unified Skill/MCP/Tool/Script resolution", "reads": ["Capability"], "writes": ["Capability"]},
+    "memory_manager": {"responsibility": "historical memory only", "reads": ["Task", "Event"], "writes": ["Memory"]},
+    "evidence_manager": {"responsibility": "execution proof and verification artifacts", "reads": ["Task", "Event"], "writes": ["Evidence"]}
+  }
+}

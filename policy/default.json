@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "model_policy": {
+    "default": "gpt-6-sol",
+    "stronger": null,
+    "allowed_models": [],
+    "fallbacks": {
+      "model_capacity": {
+        "gpt-6.1-sol": "gpt-6-sol",
+        "gemini-4-carbon-high": [
+          "gemini-4-hydrogen-xhigh",
+          "gemini-4-hydrogen-high"
+        ],
+        "gemini-4-argon-high": [
+          "gemini-4-hydrogen-high",
+          "gemini-4-hydrogen-medium"
+        ],
+        "gemini-4-hydrogen-xhigh": "gemini-4-hydrogen-high",
+        "gemini-4-hydrogen-high": "gemini-4-hydrogen-medium"
+      }
+    }
+  },
+  "defaults": {
+    "reasoning_effort": "medium",
+    "context_budget_tokens": 16000,
+    "permissions": [
+      "read"
+    ]
+  },
+  "roles": {
+    "planner": {
+      "reasoning_effort": "high",
+      "context_budget_tokens": 24000,
+      "permissions": [
+        "read",
+        "delegate",
+        "external"
+      ]
+    },
+    "coder": {
+      "reasoning_effort": "medium",
+      "context_budget_tokens": 20000,
+      "permissions": [
+        "read",
+        "write",
+        "execute",
+        "delegate",
+        "external"
+      ]
+    },
+    "tester": {
+      "reasoning_effort": "low",
+      "context_budget_tokens": 12000,
+      "permissions": [
+        "read",
+        "execute"
+      ]
+    },
+    "reviewer": {
+      "reasoning_effort": "high",
+      "context_budget_tokens": 16000,
+      "permissions": [
+        "read",
+        "external"
+      ]
+    },
+    "presentation_planner": {
+      "model": "gemini-4-argon-high",
+      "reasoning_effort": "high",
+      "context_budget_tokens": 18000,
+      "permissions": [
+        "read",
+        "external"
+      ]
+    },
+    "presentation_builder": {
+      "reasoning_effort": "medium",
+      "context_budget_tokens": 24000,
+      "permissions": [
+        "read",
+        "write",
+        "execute",
+        "external"
+      ]
+    },
+    "presentation_reviewer": {
+      "reasoning_effort": "high",
+      "context_budget_tokens": 16000,
+      "permissions": [
+        "read",
+        "execute"
+      ]
+    },
+    "learning_planner": {
+      "model": "gemini-4-argon-high",
+      "reasoning_effort": "high",
+      "context_budget_tokens": 16000,
+      "permissions": [
+        "read",
+        "external"
+      ]
+    },
+    "learning_tutor": {
+      "model": "gemini-4-argon-high",
+      "reasoning_effort": "medium",
+      "context_budget_tokens": 20000,
+      "permissions": [
+        "read",
+        "external"
+      ]
+    },
+    "learning_assessor": {
+      "reasoning_effort": "high",
+      "context_budget_tokens": 16000,
+      "permissions": [
+        "read",
+        "execute"
+      ]
+    },
+    "writing_researcher": {
+      "model": "gemini-4-argon-high",
+      "reasoning_effort": "high",
+      "context_budget_tokens": 16000,
+      "permissions": [
+        "read",
+        "external"
+      ]
+    },
+    "writing_drafter": {
+      "model": "gemini-4-argon-high",
+      "reasoning_effort": "medium",
+      "context_budget_tokens": 24000,
+      "permissions": [
+        "read",
+        "write",
+        "external"
+      ]
+    },
+    "writing_editor": {
+      "model": "gemini-4-argon-high",
+      "reasoning_effort": "high",
+      "context_budget_tokens": 20000,
+      "permissions": [
+        "read",
+        "write",
+        "external"
+      ]
+    }
+  },
+  "overrides": [
+    {
+      "when": {
+        "role": "coder",
+        "complexity": "simple"
+      },
+      "set": {
+        "context_budget_tokens": 10000
+      }
+    },
+    {
+      "when": {
+        "role": "coder",
+        "complexity": "complex"
+      },
+      "set": {
+        "context_budget_tokens": 30000
+      }
+    },
+    {
+      "when": {
+        "complexity": "simple"
+      },
+      "set": {
+        "model": "gpt-6-luna"
+      }
+    },
+    {
+      "when": {
+        "complexity_hint": "simple"
+      },
+      "set": {
+        "model": "gpt-6-luna"
+      }
+    },
+    {
+      "when": {
+        "risk": "high"
+      },
+      "set": {
+        "model": "gpt-6.1-sol"
+      }
+    },
+    {
+      "when": {
+        "importance": "high"
+      },
+      "set": {
+        "model": "gpt-6.1-sol"
+      }
+    },
+    {
+      "when": {
+        "architecture_change": true
+      },
+      "set": {
+        "model": "gpt-6.1-sol"
+      }
+    }
+  ],
+  "escalation": {
+    "retry_limit": 2,
+    "increase_effort_after_retries": 2,
+    "low_confidence_threshold": 0.5,
+    "require_reviewer_for_architecture_change": true
+  },
+  "limits": {
+    "max_parallel_agents": 3,
+    "max_agent_depth": 1,
+    "max_context_tokens": 50000,
+    "allow_subagent_creation": true
+  },
+  "global_denied_tools": [],
+  "team": {
+    "enabled": true,
+    "min_concurrency": 1,
+    "max_concurrency": 3,
+    "step": 1,
+    "capacity_cooldown_seconds": 30,
+    "capacity_success_threshold": 2,
+    "max_depth": 2,
+    "child_model": "gpt-6-luna",
+    "difficulty_effort": {
+      "simple": "low",
+      "moderate": "medium",
+      "complex": "high"
+    }
+  },
+  "supervisor": {
+    "window_size": 12,
+    "max_duplicate_tool_calls": 3,
+    "max_read_only_turns": 8,
+    "strict_evidence_gate": true,
+    "max_stop_rejections": 3,
+    "co_occurrence_decay": 0.95,
+    "co_occurrence_min_weight": 0.5,
+    "mutate_tool_patterns": [
+      "write",
+      "write_file",
+      "edit",
+      "edit_file",
+      "hash_edit",
+      "str_replace_editor",
+      "apply_patch"
+    ],
+    "verify_tool_patterns": [
+      "runtime_verify",
+      "test",
+      "verify",
+      "lint",
+      "schema_check"
+    ],
+    "transparent_tools": [
+      "todo_write",
+      "present",
+      "manage_task",
+      "ask_question",
+      "send_message",
+      "schedule",
+      "list_resources",
+      "read_resource"
+    ]
+  }
+}

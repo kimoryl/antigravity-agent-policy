@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentInstance", "type": "object", "required": ["id", "profile", "model", "capabilities", "memory_scope", "status"],
+  "properties": {"id": {"type": "string"}, "profile": {"type": "string"}, "model": {"type": "string"}, "capabilities": {"type": "array", "items": {"type": "string"}}, "memory_scope": {"type": "array", "items": {"type": "string"}}, "status": {"enum": ["created", "assigned", "running", "waiting", "review", "completed", "failed", "stopped"]}},
+  "additionalProperties": true
+}

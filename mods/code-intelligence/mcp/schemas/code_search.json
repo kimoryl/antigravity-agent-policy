@@ -1,0 +1,54 @@
+{
+  "name": "code_search",
+  "description": "Search project symbols and files through Polyglot CodeGraph AST (Python, TS/JS, Go, Rust, C#, Java, C/C++) with incremental SQLite cache.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "query": {
+        "type": "string"
+      },
+      "kind": {
+        "type": "string"
+      },
+      "max_results": {
+        "type": "integer"
+      },
+      "provider": {
+        "type": "string",
+        "description": "Optional provider ('polyglot' default, or 'python_ast')"
+      }
+    },
+    "required": [
+      "project_root",
+      "query"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "query": {
+        "type": "string"
+      },
+      "kind": {
+        "type": "string"
+      },
+      "max_results": {
+        "type": "integer"
+      },
+      "provider": {
+        "type": "string",
+        "description": "Optional provider ('polyglot' default, or 'python_ast')"
+      }
+    },
+    "required": [
+      "project_root",
+      "query"
+    ]
+  }
+}

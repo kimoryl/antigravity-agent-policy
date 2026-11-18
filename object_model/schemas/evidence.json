@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evidence", "type": "object", "required": ["id", "task_id", "artifact", "source", "verification", "timestamp"],
+  "properties": {"id": {"type": "string"}, "task_id": {"type": "string"}, "artifact": {"type": "object"}, "source": {"type": "string"}, "verification": {"type": "object"}, "timestamp": {"type": "number"}, "status": {"enum": ["captured", "verified", "rejected", "archived"]}},
+  "additionalProperties": true
+}

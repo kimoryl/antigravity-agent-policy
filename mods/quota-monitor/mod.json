@@ -1,0 +1,616 @@
+{
+  "schema_version": 1,
+  "id": "quota-monitor",
+  "name": "Quota Monitor 多智能体实时额度与负载均衡监控套件",
+  "version": "1.4.0",
+  "category": "orchestration",
+  "description": "实时监控 Antigravity 主控统领的三大 CLI 智能体（AGY-CLI、Codex-CLI、Opus-CLI）及三大底层模型池（Antigravity Gemini、Antigravity Claude/3P [支持 Claude Ultra 动态窗口]、OpenAI Codex）的剩余额度百分比、重置倒计时、Prompt Cache 5m TTL (Cache Tax) 状态与在途任务负载。",
+  "tags": [
+    "quota",
+    "rate-limit",
+    "usage",
+    "dispatch",
+    "routing",
+    "scheduler",
+    "balance",
+    "cache-tax",
+    "额度",
+    "剩余额度",
+    "限流",
+    "调度"
+  ],
+  "skills": [
+    {
+      "name": "quota-monitor",
+      "description": "实时查询三大 CLI 智能体（AGY-CLI、Codex-CLI、Opus-CLI）及三大底层模型池的剩余额度百分比、重置倒计时与 Prompt Cache TTL 准则，支持额度感知型智能调度。",
+      "path": "skills/quota-monitor/SKILL.md"
+    }
+  ],
+  "mcp_servers": {
+    "quota-monitor": {
+      "command": "python",
+      "args": [
+        "-X",
+        "utf8",
+        "${MOD_DIR}/mcp/quota_monitor_mcp.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  },
+  "mcp_tools": [
+    {
+      "name": "quota_status",
+      "description": "实时查询 三大 CLI 智能体（AGY-CLI、Opus-CLI、Codex-CLI）及三大底层模型池的剩余额度百分比、容量体量分级（Gemini 海量无周限额主力池 vs Opus/Sol 周限额精锐池）、重置倒计时与在途任务负载。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "include_raw_models": {
+            "type": "boolean",
+            "description": "是否返回所有细分模型的原始配额桶列表（默认 false）"
+          }
+        },
+        "additionalProperties": false
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "include_raw_models": {
+            "type": "boolean",
+            "description": "是否返回所有细分模型的原始配额桶列表（默认 false）"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quota_recommend_agent",
+      "description": "额度感知型智能调度推荐器（遵循 Gemini-First, Elite-On-Demand 策略）：综合 Gemini 海量无周限额主力加权、任务专长特征词、5h/周窗口实时剩余额度与在途并发数，推荐最优执行智能体。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_description": {
+            "type": "string",
+            "description": "待派发的任务描述或需求摘要"
+          },
+          "preferred_agent": {
+            "type": "string",
+            "description": "可选的首选智能体名称（如 AGY-CLI、Opus-CLI、Codex-CLI）"
+          },
+          "min_quota_percent": {
+            "type": "number",
+            "description": "最低安全剩余额度百分比阈值（默认 15.0）"
+          }
+        },
+        "required": [
+          "task_description"
+        ],
+        "additionalProperties": false
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_description": {
+            "type": "string",
+            "description": "待派发的任务描述或需求摘要"
+          },
+          "preferred_agent": {
+            "type": "string",
+            "description": "可选的首选智能体名称（如 AGY-CLI、Opus-CLI、Codex-CLI）"
+          },
+          "min_quota_percent": {
+            "type": "number",
+            "description": "最低安全剩余额度百分比阈值（默认 15.0）"
+          }
+        },
+        "required": [
+          "task_description"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quota_check_agent",
+      "description": "快速检查单个指定智能体（AGY-CLI / Opus-CLI / Codex-CLI）的实时剩余额度、容量分级及是否可派发新任务。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agent_name": {
+            "type": "string",
+            "description": "智能体名称（AGY-CLI、Opus-CLI 或 Codex-CLI）"
+          }
+        },
+        "required": [
+          "agent_name"
+        ],
+        "additionalProperties": false
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "agent_name": {
+            "type": "string",
+            "description": "智能体名称（AGY-CLI、Opus-CLI 或 Codex-CLI）"
+          }
+        },
+        "required": [
+          "agent_name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quota_purify_cli_output",
+      "description": "CLI 输出压缩净化：保留 pytest 失败、汇总 Git 变更、折叠重复日志，并执行任务级 Token 预算熔断。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "raw_output": {
+            "type": "string",
+            "description": "待净化的终端原始输出"
+          },
+          "command_hint": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "pytest",
+              "git_status",
+              "git_diff",
+              "build_log",
+              "generic"
+            ],
+            "default": "auto"
+          },
+          "max_lines": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 80
+          },
+          "token_budget": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1200
+          }
+        },
+        "required": [
+          "raw_output"
+        ],
+        "additionalProperties": false
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "raw_output": {
+            "type": "string",
+            "description": "待净化的终端原始输出"
+          },
+          "command_hint": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "pytest",
+              "git_status",
+              "git_diff",
+              "build_log",
+              "generic"
+            ],
+            "default": "auto"
+          },
+          "max_lines": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 80
+          },
+          "token_budget": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1200
+          }
+        },
+        "required": [
+          "raw_output"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quota_cognitive_mirror_sniff",
+      "description": "认知镜像嗅探器：只读聚类命令、纠偏和手工工作流，按 Rule of Three 生成规则、Skill 或 MCP 固化建议。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "command": {
+                  "type": "string"
+                },
+                "prompt": {
+                  "type": "string"
+                },
+                "correction": {
+                  "type": "string"
+                },
+                "action": {
+                  "type": "string"
+                },
+                "duration_sec": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "cli_command",
+                    "user_correction",
+                    "manual_workflow"
+                  ]
+                }
+              },
+              "additionalProperties": true
+            },
+            "default": null
+          },
+          "trace_paths": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "default": null
+          },
+          "min_repeat_threshold": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 3
+          }
+        },
+        "additionalProperties": false
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "command": {
+                  "type": "string"
+                },
+                "prompt": {
+                  "type": "string"
+                },
+                "correction": {
+                  "type": "string"
+                },
+                "action": {
+                  "type": "string"
+                },
+                "duration_sec": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "cli_command",
+                    "user_correction",
+                    "manual_workflow"
+                  ]
+                }
+              },
+              "additionalProperties": true
+            },
+            "default": null
+          },
+          "trace_paths": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "default": null
+          },
+          "min_repeat_threshold": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 3
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quota_task_guard",
+      "description": "进展感知型长任务守卫（正常推进总消耗不封顶）：通过 advance_step 在节点完成时重置单步计数，仅拦截同一节点无进展空烧（默认单步 15%/10%）、连续打回死循环（2 次升级 Carbon）、180s 进程停滞，并在跌破 10% 池底余量时温和挂起等待回血（park_for_refill）。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "start",
+              "check",
+              "advance_step",
+              "record_reject",
+              "status",
+              "reset"
+            ],
+            "description": "守卫动作：start 初始化、check 巡检空转与池底线、advance_step 节点完成重置单步锚点、record_reject 记录打回、status 查看、reset 清理"
+          },
+          "task_id": {
+            "type": "string",
+            "description": "绑定的任务唯一 ID"
+          },
+          "step_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "advance_step 时记录已完成的 DAG 节点 ID"
+          },
+          "max_step_gemini_delta_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0.5,
+            "default": null,
+            "description": "单步无进展最大 Gemini 5h 消耗百分比（默认 15.0，节点完成后归零）"
+          },
+          "max_step_codex_delta_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0.5,
+            "default": null,
+            "description": "单步无进展最大 Codex 5h 消耗百分比（默认 10.0，节点完成后归零）"
+          },
+          "max_gemini_5h_delta_pct": {
+            "type": "number",
+            "minimum": 0.5,
+            "default": 15.0
+          },
+          "max_codex_5h_delta_pct": {
+            "type": "number",
+            "minimum": 0.5,
+            "default": 10.0
+          },
+          "max_total_gemini_delta_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 1.0,
+            "default": null,
+            "description": "整单总消耗上限（默认 null 不封顶，保障健康长任务不断流）"
+          },
+          "max_total_codex_delta_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 1.0,
+            "default": null,
+            "description": "整单 Codex 总消耗上限（默认 null 不封顶）"
+          },
+          "min_gemini_reserve_pct": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 95.0,
+            "default": 10.0,
+            "description": "Gemini 5h 池底保命余量线（低于此值返回 park_for_refill 温和挂起等刷新）"
+          },
+          "min_codex_reserve_pct": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 95.0,
+            "default": 10.0,
+            "description": "Codex 5h 池底保命余量线"
+          },
+          "max_reject_rounds": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 2
+          },
+          "stall_timeout_sec": {
+            "type": "integer",
+            "minimum": 10,
+            "default": 180
+          },
+          "pid": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "default": null,
+            "description": "可选：被监控的无头 CLI 子进程 PID"
+          },
+          "watch_paths": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "default": null,
+            "description": "可选：被监控的 CLI 日志文件或隔离工作区目录列表"
+          },
+          "reject_reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "action",
+          "task_id"
+        ],
+        "additionalProperties": false
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "start",
+              "check",
+              "advance_step",
+              "record_reject",
+              "status",
+              "reset"
+            ],
+            "description": "守卫动作：start 初始化、check 巡检空转与池底线、advance_step 节点完成重置单步锚点、record_reject 记录打回、status 查看、reset 清理"
+          },
+          "task_id": {
+            "type": "string",
+            "description": "绑定的任务唯一 ID"
+          },
+          "step_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "advance_step 时记录已完成的 DAG 节点 ID"
+          },
+          "max_step_gemini_delta_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0.5,
+            "default": null,
+            "description": "单步无进展最大 Gemini 5h 消耗百分比（默认 15.0，节点完成后归零）"
+          },
+          "max_step_codex_delta_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0.5,
+            "default": null,
+            "description": "单步无进展最大 Codex 5h 消耗百分比（默认 10.0，节点完成后归零）"
+          },
+          "max_gemini_5h_delta_pct": {
+            "type": "number",
+            "minimum": 0.5,
+            "default": 15.0
+          },
+          "max_codex_5h_delta_pct": {
+            "type": "number",
+            "minimum": 0.5,
+            "default": 10.0
+          },
+          "max_total_gemini_delta_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 1.0,
+            "default": null,
+            "description": "整单总消耗上限（默认 null 不封顶，保障健康长任务不断流）"
+          },
+          "max_total_codex_delta_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 1.0,
+            "default": null,
+            "description": "整单 Codex 总消耗上限（默认 null 不封顶）"
+          },
+          "min_gemini_reserve_pct": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 95.0,
+            "default": 10.0,
+            "description": "Gemini 5h 池底保命余量线（低于此值返回 park_for_refill 温和挂起等刷新）"
+          },
+          "min_codex_reserve_pct": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 95.0,
+            "default": 10.0,
+            "description": "Codex 5h 池底保命余量线"
+          },
+          "max_reject_rounds": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 2
+          },
+          "stall_timeout_sec": {
+            "type": "integer",
+            "minimum": 10,
+            "default": 180
+          },
+          "pid": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "default": null,
+            "description": "可选：被监控的无头 CLI 子进程 PID"
+          },
+          "watch_paths": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "default": null,
+            "description": "可选：被监控的 CLI 日志文件或隔离工作区目录列表"
+          },
+          "reject_reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "action",
+          "task_id"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "rules": [
+    "rules/AGENTS.md"
+  ],
+  "profile": "@core",
+  "profiles": [
+    "@coding",
+    "@mobile",
+    "@web",
+    "@office",
+    "@automation",
+    "@ops"
+  ],
+  "modality": "coding_and_testing"
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "enabled": true,
+  "retrieval": {
+    "automatic": true,
+    "default_limit": 3,
+    "max_limit": 8,
+    "max_chars": 2500,
+    "include_project": true,
+    "include_global": true
+  },
+  "promotion": {
+    "min_support_count": 3,
+    "min_project_count": 2,
+    "max_contradiction_count": 0,
+    "min_confidence": 0.8,
+    "require_review": true
+  },
+  "skill_evolution": {
+    "enabled": true,
+    "auto_activate": false,
+    "require_regression_validation": true,
+    "require_cross_task_validation": true
+  },
+  "policy_evolution": {
+    "enabled": false,
+    "candidate_only": true
+  }
+}

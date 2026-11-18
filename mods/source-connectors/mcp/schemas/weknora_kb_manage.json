@@ -1,0 +1,56 @@
+{
+  "name": "weknora_kb_manage",
+  "description": "管理 Obsidian 静态知识库：health 状态、list 知识库、create 分类、list_docs 文档、sync_gdrive 增量镜像与本地混合索引刷新。",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": [
+          "health",
+          "list",
+          "create",
+          "list_docs",
+          "sync_gdrive"
+        ]
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      },
+      "description": {
+        "type": "string",
+        "description": "创建知识库时的描述"
+      }
+    },
+    "required": [
+      "action"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": [
+          "health",
+          "list",
+          "create",
+          "list_docs",
+          "sync_gdrive"
+        ]
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      },
+      "description": {
+        "type": "string",
+        "description": "创建知识库时的描述"
+      }
+    },
+    "required": [
+      "action"
+    ]
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "id": "ambitious-deep-thinking",
+  "name": "Claude 雄心四维深度思考 Mod (Ambitious Deep Thinking)",
+  "version": "1.2.0",
+  "category": "thinking",
+  "description": "沉淀自 Anthropic Claude 技术主管 Felix Rieseberg《How to be more ambitious》教程与知识库「高度 · 深度 · 广度」方法论，深度融合红蓝对抗（Red-Blue Confrontation）可证伪攻防闭环、MattPocock/grill-me-skill 分歧追问对齐、sequentialthinking 动态分支推演与 AI 产品经理四步工程化作业流。",
+  "tags": [
+    "deep-thinking",
+    "felix-rieseberg",
+    "altitude-depth-breadth",
+    "red-blue-teaming",
+    "grill-me",
+    "sequential-thinking",
+    "product-4step",
+    "altitude-depth-range",
+    "red-team"
+  ],
+  "source": "felixrieseberg_and_grill_me",
+  "skills": [
+    {
+      "name": "ambitious-deep-thinking",
+      "description": "Claude 技术主管 Felix Rieseberg「高度 · 深度 · 广度 + 红蓝对抗」深度思考法 v1.2（涵盖 Grill-Me 关键分歧追问、高度 Altitude 根治闭环、深度 Depth 去人设真工具与证据核验、广度 Breadth 名词转动词与跨界迁移、Red-Blue 红蓝对抗可证伪加固与 Sequential 动态分支推演）。当用户要求深度思考、升维重写 Prompt、先追问对齐核心分歧或进行红蓝对抗深度分析时触发。",
+      "manual": false,
+      "path": "skills/ambitious-deep-thinking/SKILL.md"
+    }
+  ],
+  "mcp_servers": {
+    "ambitious_deep_thinking": {
+      "command": "python",
+      "args": [
+        "-X",
+        "utf8",
+        "${MOD_DIR}/mcp/mcp_server.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  },
+  "mcp_tools": [
+    {
+      "name": "ambitious_thinking_guide",
+      "description": "获取 Claude 技术主管 Felix Rieseberg「高度 · 深度 · 广度 + 红蓝对抗」深度思考法（高度 Altitude、深度 Depth、广度 Breadth/Range、红蓝对抗 Red-Blue Confrontation、四问深度重写元指令、Grill-Me 追问对齐协议与 AI 产品经理四步法）完整技能指南与中英双语原文。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "section": {
+            "type": "string",
+            "enum": [
+              "skill",
+              "reference",
+              "meta_prompt",
+              "grill_protocol",
+              "product_4step",
+              "altitude_depth_breadth",
+              "red_blue_protocol",
+              "all"
+            ],
+            "description": "要加载的内容模块：skill（执行工作流）、reference（Felix原文与解读）、meta_prompt（中英四问重写提示词）、grill_protocol（Grill-Me追问收敛协议）、product_4step（AI产品设计四步法）、altitude_depth_breadth（高度·深度·广度三维方法论）、red_blue_protocol（红蓝对抗与可证伪核验协议）、all（全部）"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "ambitious_prompt_rewrite",
+      "description": "将用户的原始浅层任务/提示词套入「高度 · 深度 · 广度 + 红蓝对抗」深度思考框架 v1.2，生成包含 Grill-Me 关键分歧追问、高度根治闭环、深度去人设真工具与证据口径、广度名词转动词与跨界迁移、红蓝对抗可证伪攻防矩阵、Sequential 动态分支推演与 AI 产品四步法的结构化深度思考指令包。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "raw_task": {
+            "type": "string",
+            "description": "用户的原始任务或初始提示词（Prompt）"
+          },
+          "domain": {
+            "type": "string",
+            "description": "任务所属的专业领域（如：软件架构、多智能体/MCP、UI视觉动效、高并发分布式系统、产品设计等）"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "zh",
+              "en",
+              "bilingual"
+            ],
+            "description": "输出语言偏好（默认 zh）"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "grill_first",
+              "direct_rewrite",
+              "product_to_code"
+            ],
+            "description": "重写与收敛模式：auto（自动评估模糊度并附带 Grill-Me 追问）、grill_first（先追问关键分歧）、direct_rewrite（直接展开四维深度重写）、product_to_code（AI产品四步法直通代码拆解）"
+          },
+          "constraints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "已明确的硬性约束条件列表（可选）"
+          }
+        },
+        "required": [
+          "raw_task"
+        ]
+      }
+    },
+    {
+      "name": "ambitious_grill_alignment",
+      "description": "【Grill-Me 深度追问对齐器】在复杂或模糊任务动工前，精准提炼 2~3 个一阶架构权衡点（附正反代价与 Recommended 首推选项）及可直接传给 ask_question 的交互载荷，消除盲目长篇输出。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "raw_task": {
+            "type": "string",
+            "description": "待对齐的原始任务或需求描述"
+          },
+          "domain": {
+            "type": "string",
+            "description": "任务所属专业领域（可选，未传则自动根据语义识别）"
+          },
+          "known_context": {
+            "type": "string",
+            "description": "已知上下文或用户已拍板的约束条件（可选）"
+          },
+          "max_questions": {
+            "type": "integer",
+            "description": "最大追问问题数（默认 3，范围 1~4）"
+          }
+        },
+        "required": [
+          "raw_task"
+        ]
+      }
+    },
+    {
+      "name": "ambitious_sequential_reflect",
+      "description": "【Sequential Thinking 动态分支推演与红蓝对抗证伪器】融合高度·深度·广度三维校验、sequentialthinking 动态分支与红蓝对抗（Red-Blue Confrontation）机制，支持分步思考状态推演、正交分支探索（Branching）、基于一手证据的假设证伪修正（Revision）与外部客观裁判门禁。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_or_hypothesis": {
+            "type": "string",
+            "description": "当前待推演的任务目标、设计方案或架构假设"
+          },
+          "thought_step": {
+            "type": "integer",
+            "description": "当前思考步序号（从 1 开始，默认 1）"
+          },
+          "total_thoughts": {
+            "type": "integer",
+            "description": "预计总思考步数（默认 3，可根据推演复杂度动态调整）"
+          },
+          "is_revision": {
+            "type": "boolean",
+            "description": "当前步是否为推翻/修正前序假设的反证步（默认 false）"
+          },
+          "revises_step": {
+            "type": "integer",
+            "description": "若 is_revision 为 true，指明所修正的前序步号"
+          },
+          "branch_from_step": {
+            "type": "integer",
+            "description": "若当前为分叉探索，指明从第几步分叉"
+          },
+          "branch_id": {
+            "type": "string",
+            "description": "当前思考分支标识（默认 'main'）"
+          },
+          "evidence_or_constraint": {
+            "type": "string",
+            "description": "新发现的一手客观证据、报错信息或硬边界约束（可选）"
+          },
+          "domain": {
+            "type": "string",
+            "description": "任务所属专业领域（可选）"
+          },
+          "session_id": {
+            "type": "string",
+            "description": "有状态思考链会话标识（默认 'default'，用于在多步推演间追踪分支与已推翻步骤）"
+          },
+          "reset_session": {
+            "type": "boolean",
+            "description": "是否清空当前 session_id 的历史思考链重新开始（默认 false）"
+          }
+        },
+        "required": [
+          "task_or_hypothesis"
+        ]
+      }
+    }
+  ],
+  "rules": [
+    "rules/AGENTS.md"
+  ],
+  "profile": "@core",
+  "profiles": [
+    "@coding",
+    "@mobile",
+    "@web",
+    "@office",
+    "@automation",
+    "@ops"
+  ],
+  "modality": "coding_and_testing"
+}

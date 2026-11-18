@@ -1,0 +1,88 @@
+{
+  "name": "source_crawl_documentation",
+  "description": "同域/前缀有界 BFS 文档采集；支持 SHA256 去重、断点续爬与 Obsidian 批量入库。",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "start_url": {
+        "type": "string"
+      },
+      "url_prefix": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max_pages": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 50,
+        "default": 10
+      },
+      "max_depth": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 2
+      },
+      "kb": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "save_to_vault": {
+        "type": "boolean",
+        "default": true
+      },
+      "resume": {
+        "type": "boolean",
+        "default": true
+      }
+    },
+    "required": [
+      "start_url"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "start_url": {
+        "type": "string"
+      },
+      "url_prefix": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max_pages": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 50,
+        "default": 10
+      },
+      "max_depth": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 2
+      },
+      "kb": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "save_to_vault": {
+        "type": "boolean",
+        "default": true
+      },
+      "resume": {
+        "type": "boolean",
+        "default": true
+      }
+    },
+    "required": [
+      "start_url"
+    ]
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "name": "source_ingest_url",
+  "description": "解析 B 站视频元数据及 MP4 或提取网页 Markdown；save_to_weknora 保留旧参数名，写入 Obsidian Vault。",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "string",
+        "description": "B 站短链/BV号链接或任意网页文章 URL"
+      },
+      "download_mp4_to": {
+        "type": "string",
+        "description": "可选：若为 B 站视频，将 MP4 视频流下载到指定本地路径以便用 read_file 观看"
+      },
+      "save_to_weknora": {
+        "type": "boolean",
+        "description": "是否将提取内容写入 Obsidian Vault（兼容旧参数名）"
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      },
+      "render_mode": {
+        "type": "string",
+        "enum": [
+          "auto",
+          "http_fast",
+          "headless_dom"
+        ],
+        "default": "auto"
+      },
+      "timeout": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 15
+      }
+    },
+    "required": [
+      "url"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "string",
+        "description": "B 站短链/BV号链接或任意网页文章 URL"
+      },
+      "download_mp4_to": {
+        "type": "string",
+        "description": "可选：若为 B 站视频，将 MP4 视频流下载到指定本地路径以便用 read_file 观看"
+      },
+      "save_to_weknora": {
+        "type": "boolean",
+        "description": "是否将提取内容写入 Obsidian Vault（兼容旧参数名）"
+      },
+      "kb": {
+        "type": "string",
+        "description": "Optional Obsidian category or legacy knowledge base name/ID"
+      },
+      "render_mode": {
+        "type": "string",
+        "enum": [
+          "auto",
+          "http_fast",
+          "headless_dom"
+        ],
+        "default": "auto"
+      },
+      "timeout": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 15
+      }
+    },
+    "required": [
+      "url"
+    ]
+  }
+}

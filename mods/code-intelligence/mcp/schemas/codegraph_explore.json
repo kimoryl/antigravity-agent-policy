@@ -1,0 +1,56 @@
+{
+  "name": "codegraph_explore",
+  "description": "One-shot token-budgeted CodeGraph neighborhood explorer: returns matched symbols, N-hop caller/callee & inheritance graph, touched files, impact analysis, and SQLite incremental cache stats.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "query": {
+        "type": "string"
+      },
+      "max_depth": {
+        "type": "integer",
+        "description": "Call/inheritance hop depth (default 2)"
+      },
+      "max_nodes": {
+        "type": "integer",
+        "description": "Maximum symbol nodes to return to avoid fat output (default 25)"
+      },
+      "provider": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_root",
+      "query"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "query": {
+        "type": "string"
+      },
+      "max_depth": {
+        "type": "integer",
+        "description": "Call/inheritance hop depth (default 2)"
+      },
+      "max_nodes": {
+        "type": "integer",
+        "description": "Maximum symbol nodes to return to avoid fat output (default 25)"
+      },
+      "provider": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_root",
+      "query"
+    ]
+  }
+}

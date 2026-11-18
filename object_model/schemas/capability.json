@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Capability", "type": "object", "required": ["id", "type", "description", "input_schema", "output_schema", "permission"],
+  "properties": {"id": {"type": "string"}, "type": {"enum": ["skill", "mcp", "tool", "script"]}, "description": {"type": "string"}, "input_schema": {"type": "object"}, "output_schema": {"type": "object"}, "permission": {"type": "array", "items": {"type": "string"}}, "provider": {"type": "string"}, "status": {"enum": ["registered", "available", "deprecated"]}},
+  "additionalProperties": true
+}

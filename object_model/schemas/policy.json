@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Policy", "type": "object", "required": ["id", "condition", "action", "priority"],
+  "properties": {"id": {"type": "string"}, "condition": {"type": "object"}, "action": {"enum": ["allow", "deny", "approve"]}, "priority": {"type": "integer"}},
+  "additionalProperties": true
+}

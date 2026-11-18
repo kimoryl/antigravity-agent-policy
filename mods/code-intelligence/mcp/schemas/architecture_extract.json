@@ -1,0 +1,32 @@
+{
+  "name": "architecture_extract",
+  "description": "Extract a structured polyglot project architecture and dependency graph.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "provider": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_root"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "provider": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_root"
+    ]
+  }
+}

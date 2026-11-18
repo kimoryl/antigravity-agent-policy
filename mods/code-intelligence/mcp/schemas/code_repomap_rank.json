@@ -1,0 +1,86 @@
+{
+  "name": "code_repomap_rank",
+  "description": "Rank symbols/modules with personalized PageRank and produce a strictly budgeted compact signature tree.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "focus_files": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "string"
+        }
+      },
+      "focus_symbols": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "string"
+        }
+      },
+      "token_budget": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 1000
+      },
+      "provider": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "default": "polyglot"
+      }
+    },
+    "required": [
+      "project_root"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "focus_files": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "string"
+        }
+      },
+      "focus_symbols": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "string"
+        }
+      },
+      "token_budget": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 1000
+      },
+      "provider": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "default": "polyglot"
+      }
+    },
+    "required": [
+      "project_root"
+    ]
+  }
+}

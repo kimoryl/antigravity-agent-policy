@@ -1,0 +1,458 @@
+{
+  "schema_version": 1,
+  "id": "source-connectors",
+  "name": "Obsidian 静态知识库与全网音视频/网页连接器 (Source Connectors v3.1.0)",
+  "version": "3.1.0",
+  "category": "connectors",
+  "description": "Obsidian 静态知识库 + SQLite FTS5 BM25 章节检索 + 384d 本地轻量语义向量与 RRF 混合重排 + WikiLinks 双链图谱，以及 B 站视频与全网网页 Markdown 提取；v3.1.0 新增二跳图扩散、SPA 自适应清洗与有界断点文档采集。无需 Docker、Ollama 或知识库 HTTP 服务。",
+  "tags": [
+    "obsidian",
+    "sqlite-fts5",
+    "bm25",
+    "384d-vector",
+    "wikilinks",
+    "rag",
+    "bilibili",
+    "web-ingest",
+    "connectors"
+  ],
+  "source": "obsidian_static_vault_hybrid_engine",
+  "skills": [
+    {
+      "name": "source-connectors",
+      "description": "Obsidian 静态知识库、SQLite FTS5 与轻量向量混合检索，以及视频网页提取指南",
+      "path": "skills/source-connectors/SKILL.md"
+    }
+  ],
+  "mcp_servers": {
+    "source_connectors": {
+      "command": "python",
+      "args": [
+        "-X",
+        "utf8",
+        "${MOD_DIR}/mcp/mcp_server.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  },
+  "mcp_tools": [
+    {
+      "name": "source_connect",
+      "description": "Inspect or query Obsidian vault status, hybrid knowledge search, documents, and repository connectors; legacy operations remain compatible.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "status",
+              "repository_search",
+              "repository_read",
+              "knowledge_search",
+              "document_read"
+            ]
+          },
+          "query": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "status",
+              "repository_search",
+              "repository_read",
+              "knowledge_search",
+              "document_read"
+            ]
+          },
+          "query": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      }
+    },
+    {
+      "name": "weknora_kb_manage",
+      "description": "管理 Obsidian 静态知识库：health 状态、list 知识库、create 分类、list_docs 文档、sync_gdrive 增量镜像与本地混合索引刷新。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "health",
+              "list",
+              "create",
+              "list_docs",
+              "sync_gdrive"
+            ]
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "创建知识库时的描述"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "health",
+              "list",
+              "create",
+              "list_docs",
+              "sync_gdrive"
+            ]
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "创建知识库时的描述"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      }
+    },
+    {
+      "name": "weknora_rag_query",
+      "description": "检索 Obsidian：search 返回 SQLite FTS5 BM25 + 384d 轻量语义向量 + 双链 RRF 章节；chat 返回原文证据与 references，由调用方模型综合回答。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "检索关键词或自然语言问题"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "search",
+              "chat"
+            ],
+            "description": "search 返回原文分块，chat 返回 LLM 综合回答与引用"
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          },
+          "top_k": {
+            "type": "integer",
+            "description": "返回最大片段数（默认 8）"
+          },
+          "graph_hops": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 2
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "检索关键词或自然语言问题"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "search",
+              "chat"
+            ],
+            "description": "search 返回原文分块，chat 返回 LLM 综合回答与引用"
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          },
+          "top_k": {
+            "type": "integer",
+            "description": "返回最大片段数（默认 8）"
+          },
+          "graph_hops": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 2
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "weknora_ingest",
+      "description": "将 Markdown 或 URL 导入 Obsidian 静态知识库，自动生成 YAML、关联 WikiLinks 并刷新本地章节与向量索引。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "知识文档标题"
+          },
+          "content": {
+            "type": "string",
+            "description": "Markdown 正文内容"
+          },
+          "url": {
+            "type": "string",
+            "description": "可选：要抓取入库的网页或 B 站视频 URL"
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          }
+        },
+        "required": []
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "知识文档标题"
+          },
+          "content": {
+            "type": "string",
+            "description": "Markdown 正文内容"
+          },
+          "url": {
+            "type": "string",
+            "description": "可选：要抓取入库的网页或 B 站视频 URL"
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "source_ingest_url",
+      "description": "解析 B 站视频元数据及 MP4 或提取网页 Markdown；save_to_weknora 保留旧参数名，写入 Obsidian Vault。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "B 站短链/BV号链接或任意网页文章 URL"
+          },
+          "download_mp4_to": {
+            "type": "string",
+            "description": "可选：若为 B 站视频，将 MP4 视频流下载到指定本地路径以便用 read_file 观看"
+          },
+          "save_to_weknora": {
+            "type": "boolean",
+            "description": "是否将提取内容写入 Obsidian Vault（兼容旧参数名）"
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          },
+          "render_mode": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "http_fast",
+              "headless_dom"
+            ],
+            "default": "auto"
+          },
+          "timeout": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 15
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "B 站短链/BV号链接或任意网页文章 URL"
+          },
+          "download_mp4_to": {
+            "type": "string",
+            "description": "可选：若为 B 站视频，将 MP4 视频流下载到指定本地路径以便用 read_file 观看"
+          },
+          "save_to_weknora": {
+            "type": "boolean",
+            "description": "是否将提取内容写入 Obsidian Vault（兼容旧参数名）"
+          },
+          "kb": {
+            "type": "string",
+            "description": "Optional Obsidian category or legacy knowledge base name/ID"
+          },
+          "render_mode": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "http_fast",
+              "headless_dom"
+            ],
+            "default": "auto"
+          },
+          "timeout": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 15
+          }
+        },
+        "required": [
+          "url"
+        ]
+      }
+    },
+    {
+      "name": "source_crawl_documentation",
+      "description": "同域/前缀有界 BFS 文档采集；支持 SHA256 去重、断点续爬与 Obsidian 批量入库。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "start_url": {
+            "type": "string"
+          },
+          "url_prefix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "max_pages": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10
+          },
+          "max_depth": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 2
+          },
+          "kb": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "save_to_vault": {
+            "type": "boolean",
+            "default": true
+          },
+          "resume": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "start_url"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "start_url": {
+            "type": "string"
+          },
+          "url_prefix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "max_pages": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10
+          },
+          "max_depth": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 2
+          },
+          "kb": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "save_to_vault": {
+            "type": "boolean",
+            "default": true
+          },
+          "resume": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "start_url"
+        ]
+      }
+    }
+  ],
+  "rules": [
+    "rules/AGENTS.md"
+  ],
+  "profile": "@core",
+  "profiles": [
+    "@coding",
+    "@mobile",
+    "@web",
+    "@office",
+    "@automation",
+    "@ops"
+  ],
+  "modality": "coding_and_testing"
+}

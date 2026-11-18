@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Memory", "type": "object", "required": ["id", "scope", "kind", "summary", "created_at"],
+  "properties": {"id": {"type": "string"}, "scope": {"enum": ["context", "project", "experience"]}, "kind": {"type": "string"}, "summary": {"type": "string"}, "created_at": {"type": "number"}, "status": {"enum": ["created", "active", "archived", "stale"]}},
+  "additionalProperties": true
+}

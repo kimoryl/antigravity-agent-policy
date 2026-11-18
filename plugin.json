@@ -1,0 +1,12 @@
+{
+  "name": "antigravity-agent-policy",
+  "displayName": "Antigravity 代理策略与全局运行时",
+  "version": "0.3.2",
+  "description": "提供全局任务运行时（Global Runtime）、代理角色策略（Agent Policy）、按需技能池（Skill Pool）、统一能力池（Capability Pool）、生命周期钩子与本地可视化监控面板（Dashboard）。",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "使用全局运行时（Global Runtime）规划并追踪当前任务，在派发子代理前应用代理策略",
+    "打开本地监控面板（Dashboard）查看当前任务状态、能力池与交付版本",
+    "在技能池（Skill Pool）中检索适合当前任务阶段的技能与工具能力"
+  ]
+}

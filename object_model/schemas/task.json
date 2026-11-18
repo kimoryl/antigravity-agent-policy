@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Task",
+  "type": "object",
+  "required": ["id", "goal", "owner", "status", "capability", "input", "output", "verification"],
+  "properties": {
+    "id": {"type": "string"}, "goal": {"type": "string"}, "description": {"type": "string"},
+    "owner": {"type": "string"}, "status": {"enum": ["created", "assigned", "running", "review", "completed", "failed"]},
+    "capability": {"type": "array", "items": {"type": "string"}}, "input": {"type": "object"},
+    "output": {"type": "object"}, "verification": {"type": "array", "items": {"type": "object"}}
+  }, "additionalProperties": true
+}

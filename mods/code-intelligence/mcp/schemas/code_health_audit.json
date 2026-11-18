@@ -1,0 +1,86 @@
+{
+  "name": "code_health_audit",
+  "description": "Audit static dead code, cross-module dependency cycles and complexity hotspots with an isolated JSON baseline gate.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "entry_points": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "string"
+        }
+      },
+      "complexity_threshold": {
+        "type": "integer",
+        "default": 10
+      },
+      "baseline_path": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "save_baseline": {
+        "type": "boolean",
+        "default": false
+      },
+      "provider": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "default": "polyglot"
+      }
+    },
+    "required": [
+      "project_root"
+    ]
+  },
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "project_root": {
+        "type": "string"
+      },
+      "entry_points": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "string"
+        }
+      },
+      "complexity_threshold": {
+        "type": "integer",
+        "default": 10
+      },
+      "baseline_path": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "save_baseline": {
+        "type": "boolean",
+        "default": false
+      },
+      "provider": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "default": "polyglot"
+      }
+    },
+    "required": [
+      "project_root"
+    ]
+  }
+}

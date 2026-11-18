@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "roles": {
+    "planner": {
+      "category": "general",
+      "display_name": "任务规划师",
+      "purpose": "制定并修订任务分步计划与依赖关系图（DAG）。",
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "root_goal", "local_goal", "constraints", "context_refs"],
+      "output_fields": ["steps", "dependencies", "risks", "verification_requirements"]
+    },
+    "coder": {
+      "category": "general",
+      "display_name": "代码开发工程师",
+      "purpose": "在限定边界内实现项目代码修改。",
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "local_goal", "constraints", "context_refs", "expected_outputs"],
+      "output_fields": ["changed_files", "result", "verification_evidence"]
+    },
+    "tester": {
+      "category": "general",
+      "display_name": "测试验证工程师",
+      "purpose": "运行并检查具体的构建与测试验证项。",
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "local_goal", "acceptance_criteria", "context_refs"],
+      "output_fields": ["checks", "failures", "result"]
+    },
+    "reviewer": {
+      "category": "general",
+      "display_name": "架构与代码审校员",
+      "purpose": "审查代码正确性、潜在风险与跨模块一致性。",
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "root_goal", "constraints", "changed_files", "verification_evidence"],
+      "output_fields": ["findings", "severity", "result"]
+    },
+    "presentation_planner": {
+      "category": "presentation",
+      "display_name": "PPT 内容策划",
+      "purpose": "将受众与目标转化为连贯的演示文稿叙事与证据计划。",
+      "guidance": "Define the audience, central message, slide sequence and claims requiring evidence. Hand a concise deck brief to the builder; do not create the final deck.",
+      "skill_tags": ["presentation"],
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "local_goal", "audience", "constraints", "context_refs"],
+      "output_fields": ["deck_brief", "slide_outline", "evidence_gaps"]
+    },
+    "presentation_builder": {
+      "category": "presentation",
+      "display_name": "PPT 页面制作",
+      "purpose": "根据已批准的大纲构建并渲染演示文稿产物。",
+      "guidance": "Create or edit the deck, use a consistent visual system, and render pages for inspection. Keep claims traceable to the brief and report artifact paths.",
+      "skill_tags": ["presentation", "slides"],
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "deck_brief", "slide_outline", "constraints", "context_refs"],
+      "output_fields": ["artifact_paths", "render_checks", "result"]
+    },
+    "presentation_reviewer": {
+      "category": "presentation",
+      "display_name": "PPT 成品审校",
+      "purpose": "检查渲染后的幻灯片清晰度、视觉质量与事实一致性。",
+      "guidance": "Review the rendered deck against the brief. Flag specific slide-level readability, consistency and evidence problems; do not silently rewrite the deck.",
+      "skill_tags": ["presentation"],
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "artifact_paths", "deck_brief", "acceptance_criteria"],
+      "output_fields": ["findings", "readability_checks", "result"]
+    },
+    "learning_planner": {
+      "category": "learning",
+      "display_name": "学习路径设计",
+      "purpose": "根据学习者目标与可用时间设计匹配的学习路径。",
+      "guidance": "Establish starting knowledge, sequence topics, set milestones and plan practice with observable success criteria.",
+      "skill_tags": ["education"],
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "learning_goal", "prior_knowledge", "time_budget", "constraints"],
+      "output_fields": ["learning_path", "milestones", "practice_plan"]
+    },
+    "learning_tutor": {
+      "category": "learning",
+      "display_name": "学习讲解与练习",
+      "purpose": "通过讲解、示例与引导练习教授主题内容。",
+      "guidance": "Explain one concept at a time, check understanding with short practice and adapt to the learner's responses. Do not claim mastery without assessment evidence.",
+      "skill_tags": ["education", "teaching"],
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "learning_path", "current_topic", "learner_context"],
+      "output_fields": ["explanation", "practice", "open_questions"]
+    },
+    "learning_assessor": {
+      "category": "learning",
+      "display_name": "学习效果评估",
+      "purpose": "检查已展现的理解程度并识别下一步练习需求。",
+      "guidance": "Use a clear rubric, grade only work the learner has actually provided, explain gaps and recommend the next exercise.",
+      "skill_tags": ["education"],
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "learning_goal", "learner_work", "rubric"],
+      "output_fields": ["assessment", "gaps", "next_practice"]
+    },
+    "writing_researcher": {
+      "category": "writing",
+      "display_name": "写作资料调研",
+      "purpose": "收集可靠参考资料并区分事实证据与推论。",
+      "guidance": "Collect relevant sources, record claim-to-source links and unresolved questions. Do not turn unsupported claims into facts.",
+      "skill_tags": ["research", "document"],
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "brief", "audience", "source_constraints"],
+      "output_fields": ["source_notes", "claim_evidence", "open_questions"]
+    },
+    "writing_drafter": {
+      "category": "writing",
+      "display_name": "文稿起草",
+      "purpose": "根据目标受众、格式与语调撰写初稿。",
+      "guidance": "Draft from the brief and available evidence, keep the requested voice, and mark claims that still need support.",
+      "skill_tags": ["writing"],
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "brief", "audience", "tone", "source_notes"],
+      "output_fields": ["draft", "unsupported_claims", "result"]
+    },
+    "writing_editor": {
+      "category": "writing",
+      "display_name": "文稿编辑",
+      "purpose": "修订文稿结构、清晰度、一致性与事实依据。",
+      "guidance": "Preserve the author's intent and voice while editing. Explain substantive changes and surface unresolved factual issues.",
+      "skill_tags": ["writing"],
+      "default_skills": ["agent-policy"],
+      "input_fields": ["task_id", "draft", "brief", "style_requirements"],
+      "output_fields": ["revised_draft", "edits", "remaining_issues"]
+    }
+  }
+}

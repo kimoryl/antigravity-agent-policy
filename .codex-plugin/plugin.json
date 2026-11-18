@@ -1,0 +1,21 @@
+{
+  "name": "antigravity-agent-policy",
+  "version": "0.3.2",
+  "description": "Run project tasks with Antigravity Global Runtime, Supervisor Engine, 3D Cross-Memory Matrix, and unified @core Mods.",
+  "author": {
+    "name": "Antigravity Agent Policy Contributors"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Antigravity Agent Policy",
+    "shortDescription": "Global Runtime, Supervisor Engine, 3D Memory, and @core Mods.",
+    "longDescription": "Coordinate tasks, DAG plans, anchored edits, heterogeneous agent verification, and checkpoints using a local runtime with on-demand @core Mods.",
+    "developerName": "Antigravity Contributors",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ],
+    "defaultPrompt": "Use Global Runtime to track this task and apply agent policy before delegation."
+  },
+  "mcpServers": "./.mcp.json"
+}

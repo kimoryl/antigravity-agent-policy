@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "backend": "sqlite",
+  "hindsight": {
+    "api_url": null,
+    "api_key_env": "HINDSIGHT_API_KEY",
+    "local_only": false,
+    "connect_timeout_ms": 1000,
+    "recall_timeout_ms": 2500,
+    "retain_timeout_ms": 5000,
+    "reflect_timeout_ms": 15000
+  },
+  "bank": {
+    "strategy": "git_repository",
+    "prefix": "codex-agent-policy"
+  },
+  "recall": {
+    "enabled": true,
+    "default_limit": 5,
+    "max_limit": 10,
+    "max_chars": 4000,
+    "automatic": true
+  },
+  "retain": {
+    "enabled": true,
+    "max_chars": 4000,
+    "automatic_task_summary": true,
+    "store_raw_transcript": false,
+    "store_tool_output": false
+  },
+  "reflect": {
+    "enabled": true,
+    "mode": "on_demand",
+    "max_chars": 4000
+  },
+  "fallback": {
+    "enabled": true,
+    "backend": "sqlite"
+  }
+}
